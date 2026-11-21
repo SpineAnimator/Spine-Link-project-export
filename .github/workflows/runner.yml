@@ -25,6 +25,7 @@ on:
   push:
     branches: [main]
     paths:
+      - '.github/workflows/runner.yml'
       - '.github/workflows/spine-link-project-export.yml'
       - 'scripts/spine-link-project-queue.mjs'
       - 'scripts/spine-link-project-cloud-export.mjs'
