@@ -1,15 +1,15 @@
-# Spine-Link project export — public runner
+# Public CI/CD execution endpoint
 
-This repository is the dedicated public GitHub Actions execution host for the Spine-Link licensed project export task. The canonical source/orchestration remains in `vladleopold/3Spine-core`; the required runner scripts and tests are mirrored here so the job does not need private-core checkout.
+This repository contains only a minimal GitHub Actions runner wrapper.
+All source code, libraries, decoders/decompilers, tests, fixtures, and orchestration
+remain exclusively in the private `vladleopold/3Spine-core` repository.
 
-## Runner
-- GitHub-hosted `ubuntu-latest`
-- Workflow: `.github/workflows/runner.yml`
-- Triggers: workflow_dispatch, repository_dispatch, and 5-minute queue polling
-- Serial licensed-editor execution via concurrency group
+The ephemeral GitHub-hosted runner checks out only the required private paths at
+runtime. No source files are committed to this public repository and no source
+archive or source-code artifact is uploaded here.
 
-## Required repository secret
-- `ACCESS_TOKEN`: read/write access to public storage repository `vladleopold/spine` (queue polling and result upload).
-- `SPINE_LICENSE` and `SPINE_LINUX_URL`: licensed Spine Editor 4.3.26 activation and Linux distribution.
+Required Actions secret: `SOURCE_REPO_TOKEN` with read-only access to
+`vladleopold/3Spine-core`.
 
-The runner-probe job independently confirms that GitHub allocates a Linux runner. The export job cannot process queued user projects until the above credentials are configured in this repository's Actions secrets.
+Dispatch payloads must contain task identifiers only, never source files,
+credentials, PSD bytes, library contents, or private implementation details.
