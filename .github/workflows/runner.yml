@@ -13,6 +13,7 @@ on:
         type: string
   pull_request:
     paths:
+      - '.github/workflows/runner.yml'
       - '.github/workflows/spine-link-project-export.yml'
       - 'scripts/spine-link-project-queue.mjs'
       - 'scripts/spine-link-project-cloud-export.mjs'
@@ -40,6 +41,20 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+
+  runner-probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Confirm public GitHub-hosted Linux runner allocation
+        run: |
+          set -euo pipefail
+          echo "repository=$GITHUB_REPOSITORY"
+          echo "runner=$RUNNER_NAME"
+          echo "os=$RUNNER_OS"
+          uname -a
+          df -h "$GITHUB_WORKSPACE"
+
   convert:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -47,6 +62,9 @@ jobs:
       - name: Read trusted private export code
         uses: actions/checkout@v4
         with:
+          repository: vladleopold/3Spine-core
+          ref: main
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
           persist-credentials: false
           filter: blob:none
           sparse-checkout: |
