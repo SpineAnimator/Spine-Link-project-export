@@ -26,6 +26,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      - name: Require private source credential
+        env:
+          SOURCE_REPO_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$SOURCE_REPO_TOKEN" ]; then
+            echo "::error::Required Actions secret SOURCE_REPO_TOKEN is not configured; private checkout cannot run."
+            exit 1
+          fi
       - name: Checkout private source from 3Spine-core
         uses: actions/checkout@v4
         with:
