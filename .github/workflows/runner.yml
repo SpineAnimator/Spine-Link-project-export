@@ -63,9 +63,6 @@ jobs:
       - name: Read trusted private export code
         uses: actions/checkout@v4
         with:
-          repository: vladleopold/3Spine-core
-          ref: main
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
           persist-credentials: false
           filter: blob:none
           sparse-checkout: |
