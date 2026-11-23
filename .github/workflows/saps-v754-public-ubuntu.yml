@@ -152,6 +152,7 @@ jobs:
         run: |
           node --input-type=module --check < workers/plan-workflow-test/index.js
           node --test tests/plan-workflow-layer-review.test.mjs
+          node -e "const fs=require('fs'); const s=fs.readFileSync('workers/plan-workflow-test/index.js','utf8'); for (const needle of ['/api/plan-download','ZIP_URL_FORBIDDEN','saps.layer-review/v1']) if (!s.includes(needle)) throw new Error('Missing plan workflow contract: '+needle)"
       - name: Visual gate must fail closed without trusted render/model evidence
         run: node --test tests/visual-gate.test.cjs
 
