@@ -1,6 +1,11 @@
 name: SAPS v7.54 private-source acceptance (public Ubuntu runners)
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/saps-v754-public-ubuntu.yml
   push:
     branches:
       - task/saps-v754-public-ubuntu-acceptance
