@@ -55,7 +55,7 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_psd_v754_tree.py' -v
       - name: PNG geometry and deterministic ZIP tests
         run: python -m unittest discover -s tests -p 'test_psd_spine_packaging.py' -v
-      - name: Verify real PSD extraction and fail-closed v7.54 ambiguity handling
+      - name: Verify real PSD conversion preserves duplicate source names without renaming
         shell: bash
         run: |
           set -euo pipefail
@@ -74,17 +74,29 @@ jobs:
           walk(tree['children'])
           print('REAL_PSD_TREE_AND_PARALLEL_RASTERS_VALID')
           PY
-          set +e
-          python tools/psd-spine/convert_psd_to_spine.py tests/fixtures/etalons/cherry/source.psd "$RUNNER_TEMP/saps-cherry-spine43.zip" --workers 2 >"$RUNNER_TEMP/saps-convert.out" 2>"$RUNNER_TEMP/saps-convert.err"
-          status=$?
-          set -e
-          test "$status" -ne 0
-          grep -q 'V754_DUPLICATE_ATTACHMENT' "$RUNNER_TEMP/saps-convert.err"
-          if grep -q 'V754_LAYER_KIND_UNSUPPORTED' "$RUNNER_TEMP/saps-convert.err"; then
-            echo 'Smart Object composite unexpectedly unsupported'
-            exit 1
-          fi
-          echo 'REAL_PSD_CONVERSION_BLOCKED_AS_EXPECTED: upstream v7.54 duplicate-name guard'
+          python tools/psd-spine/convert_psd_to_spine.py tests/fixtures/etalons/cherry/source.psd "$RUNNER_TEMP/saps-cherry-spine43.zip" --workers 2
+          python - "$RUNNER_TEMP/saps-cherry-spine43.zip" <<'PY'
+          import json,sys,zipfile
+          with zipfile.ZipFile(sys.argv[1]) as archive:
+              assert archive.testzip() is None
+              skeleton=json.loads(archive.read('skeleton.json'))
+              manifest=json.loads(archive.read('manifest.json'))
+          names=[item['name'] for item in manifest['layer_inventory']]
+          orn_layers=[item for item in manifest['layer_inventory'] if item.get('name')=='orn']
+          orn_jobs=[item for item in manifest['raster_jobs'] if item.get('sourceLayerName')=='orn']
+          orn_slots=[item for item in skeleton['slots'] if item['name']=='orn' or item['name'].startswith('orn__src_')]
+          assert len(names)==7, names
+          assert len(orn_layers)==2, orn_layers
+          assert len({item['layerId'] for item in orn_layers})==2
+          assert len(orn_jobs)==2, orn_jobs
+          assert len({item['destination'] for item in orn_jobs})==2
+          assert len(orn_slots)==2, orn_slots
+          assert len({item['name'] for item in skeleton['slots']})==len(skeleton['slots'])
+          assert all(item['attachment']=='orn' for item in orn_slots)
+          assert not any(name=='orn__2' for name in names)
+          print('REAL_PSD_DUPLICATE_ORN_PRESERVED_NO_SOURCE_LAYER_RENAMING')
+          print('REAL_PSD_SPINE43_ZIP_INTEGRITY_PASS')
+          PY
 
   v754-export-semantics:
     name: v7.54 tag, hierarchy and raster mapping contract
