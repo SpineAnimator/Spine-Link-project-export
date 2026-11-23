@@ -148,6 +148,10 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: node --test tests/vision.test.cjs tests/vision-pixel-distance.test.cjs tests/sa-agent.test.cjs tests/sa-agent-runtime.test.cjs
+      - name: Validate plan workflow per-layer CV source and manifest join
+        run: |
+          node --input-type=module --check < workers/plan-workflow-test/index.js
+          node --test tests/plan-workflow-layer-review.test.mjs
       - name: Visual gate must fail closed without trusted render/model evidence
         run: node --test tests/visual-gate.test.cjs
 
@@ -191,7 +195,7 @@ jobs:
           AI: ${{ needs.ai-source-readiness.result }}
           SPINE: ${{ needs.spine43-export-runtime.result }}
         run: |
-          printf 'SAPS real PSD: %s\\nv7.54 semantics: %s\\nAI readiness contracts: %s\\nSpine 4.3 runtime contracts: %s\\n' "$PSD" "$V754" "$AI" "$SPINE"
+          printf 'SAPS real PSD: %s\nv7.54 semantics: %s\nAI readiness contracts: %s\nSpine 4.3 runtime contracts: %s\n' "$PSD" "$V754" "$AI" "$SPINE"
           test "$PSD" = success
           test "$V754" = success
           test "$AI" = success
