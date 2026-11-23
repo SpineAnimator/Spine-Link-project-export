@@ -104,6 +104,15 @@ jobs:
           print('REAL_PSD_SPINE43_ZIP_INTEGRITY_PASS')
           PY
 
+      - name: Publish validated fixture ZIP for downstream inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: saps-cherry-spine43-fixture-${{ github.run_id }}
+          path: ${{ runner.temp }}/saps-cherry-spine43.zip
+          if-no-files-found: error
+          retention-days: 14
+
+
   v754-export-semantics:
     name: v7.54 tag, hierarchy and raster mapping contract
     runs-on: ubuntu-24.04
