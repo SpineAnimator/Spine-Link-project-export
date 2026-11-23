@@ -1,4 +1,4 @@
-name: SAPS v7.54 private-source acceptance (public Ubuntu runners)
+name: SAPS v7.54 private-source acceptance (public Ubuntu runners) # same-repo PR validation
 
 on:
   pull_request:
