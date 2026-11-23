@@ -1,4 +1,5 @@
 name: SAPS v7.54 private-source acceptance (public Ubuntu runners) # same-repo PR validation
+# Acceptance rerun target: SpineAnimator/spine-animator-private@117c7e0d566bf2625a9f18d99579c2959a3223c3
 
 on:
   pull_request:
