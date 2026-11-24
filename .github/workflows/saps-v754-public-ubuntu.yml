@@ -1,6 +1,6 @@
 name: SAPS v7.54 private-source acceptance (public Ubuntu runners) # same-repo PR validation
-# Acceptance rerun target: SpineAnimator/spine-animator-private@ab35d6d23670726a2e8aaab8316f795e738b099d
-# Revalidate v7.54 skin placeholder normalization against the latest private-source branch.
+# Acceptance rerun target: SpineAnimator/spine-animator-private@1ac52ec4d1b8d1107862eec331eb85f3c2e22343
+# Revalidate both inherited skin-group placeholders and leaf-level skin collision detection.
 
 on:
   pull_request:
