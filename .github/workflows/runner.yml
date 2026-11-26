@@ -1,9 +1,24 @@
 name: Public Ubuntu Spine-Link project export checks
 on:
   workflow_call:
+    inputs:
+      upload_id:
+        required: false
+        type: string
+        default: ''
     secrets:
       SOURCE_REPO_TOKEN:
         required: true
+      ACCESS_TOKEN:
+        required: true
+      SPINE_LICENSE:
+        required: true
+      SPINE_LINUX_URL:
+        required: true
+  pull_request:
+    paths:
+      - '.github/workflows/runner.yml'
+      - 'tests/test_public_runner_contract.py'
   push:
     branches: [main]
     paths:
@@ -22,7 +37,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: private-spine-link-executor
+  group: public-spine-link-executor
   cancel-in-progress: false
 jobs:
   runner-probe:
