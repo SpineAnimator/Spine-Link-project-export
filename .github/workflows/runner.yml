@@ -22,6 +22,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/runner.yml'
+      - '.github/workflows/last7-real-preview.yml'
       - 'tests/test_public_runner_contract.py'
   schedule:
     - cron: '*/5 * * * *'
