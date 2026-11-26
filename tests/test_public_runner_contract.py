@@ -18,7 +18,7 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertIn("ACCESS_TOKEN", source)
         self.assertIn("SPINE_LICENSE", source)
         self.assertIn("SPINE_LINUX_URL", source)
-        self.assertIn("SPINE_MASK_NATIVE_WAITING_FOR_EDITOR_SECRETS", source)
+        self.assertIn("SPINE_LINK_LICENSED_EXPORT_WAITING_FOR_SECRETS", source)
         self.assertIn("scripts/spine-link-project-cloud-export.mjs", source)
         self.assertIn("SPINE_UPLOAD_ID", source)
         self.assertIn("timeout 180 xvfb-run", source)
