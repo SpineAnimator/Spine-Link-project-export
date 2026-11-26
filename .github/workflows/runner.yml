@@ -8,6 +8,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/runner.yml'
+      - 'tests/test_public_runner_contract.py'
   schedule:
     - cron: '11 * * * *'
   workflow_dispatch:
@@ -28,6 +29,14 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run public runner workflow contract (RED)
+        run: python -m unittest discover -s tests -p test_public_runner_contract.py -v
       - run: |
           set -euo pipefail
           echo "Public ephemeral runner allocated: $RUNNER_NAME ($RUNNER_OS)"
