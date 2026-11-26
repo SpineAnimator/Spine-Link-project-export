@@ -17,6 +17,12 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertIn("repository: SpineAnimator/Spine-Link-project-export", probe)
         self.assertIn("ref: main", probe)
 
+    def test_private_source_guard_uses_resolved_token_with_caller_fallback(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        guard = source.split("  execute-source-contracts:", 1)[1].split("  licensed-project-export:", 1)[0]
+        self.assertIn("github.repository == 'vladleopold/3Spine-core' && github.token", source)
+        self.assertNotIn("SOURCE_REPO_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}", guard)
+
     def test_public_runner_checks_storage_write_scope_without_printing_token(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("SPINE_LINK_STORAGE_WRITE_PERMISSION_MISSING", source)
