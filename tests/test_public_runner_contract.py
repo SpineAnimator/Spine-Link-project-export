@@ -13,7 +13,7 @@ class PublicRunnerContractTests(unittest.TestCase):
 
     def test_reusable_runner_probe_checks_out_its_own_public_repository(self):
         source = WORKFLOW.read_text(encoding="utf-8")
-        probe = source.split("  runner-probe:", 1)[1].split("  execute-private-checks:", 1)[0]
+        probe = source.split("  runner-probe:", 1)[1].split("  execute-source-contracts:", 1)[0]
         self.assertIn("repository: SpineAnimator/Spine-Link-project-export", probe)
         self.assertIn("ref: main", probe)
 
