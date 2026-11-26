@@ -112,17 +112,18 @@ jobs:
           for key in SOURCE_REPO_TOKEN SPINE_LICENSE SPINE_LINUX_URL; do
             if [ -z "${!key}" ]; then missing+=("$key"); fi
           done
+          storage_push=false
+          if [ -n "$SOURCE_REPO_TOKEN" ]; then
+            storage_push="$(GH_TOKEN="$SOURCE_REPO_TOKEN" gh api repos/vladleopold/spine --jq '.permissions.push' 2>/dev/null || true)"
+          fi
+          if [ "$storage_push" != "true" ]; then
+            missing+=("STORAGE_REPOSITORY_WRITE_PERMISSION")
+            echo "SPINE_LINK_STORAGE_WRITE_PERMISSION_MISSING" >> "$GITHUB_STEP_SUMMARY"
+          fi
           if [ "${#missing[@]}" -gt 0 ]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
             echo "SPINE_LINK_LICENSED_EXPORT_WAITING_FOR_SECRETS" >> "$GITHUB_STEP_SUMMARY"
             printf 'Missing public-executor configuration: %s\\n' "${missing[*]}"
-            exit 0
-          fi
-          storage_push="$(GH_TOKEN="$SOURCE_REPO_TOKEN" gh api repos/vladleopold/spine --jq '.permissions.push' 2>/dev/null || true)"
-          if [ "$storage_push" != "true" ]; then
-            echo "ready=false" >> "$GITHUB_OUTPUT"
-            echo "SPINE_LINK_STORAGE_WRITE_PERMISSION_MISSING" >> "$GITHUB_STEP_SUMMARY"
-            echo "SOURCE_REPO_TOKEN can read the source but cannot write the Spine storage repository."
             exit 0
           fi
           echo "ready=true" >> "$GITHUB_OUTPUT"
