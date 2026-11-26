@@ -11,6 +11,12 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertNotIn("self-hosted", source)
         self.assertGreaterEqual(source.count("runs-on: ubuntu-24.04"), 3)
 
+    def test_public_runner_checks_storage_write_scope_without_printing_token(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("SPINE_LINK_STORAGE_WRITE_PERMISSION_MISSING", source)
+        self.assertIn("repos/vladleopold/spine", source)
+        self.assertIn(".permissions.push", source)
+
     def test_public_runner_polls_the_export_queue_every_five_minutes(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("schedule:", source)
@@ -20,7 +26,8 @@ class PublicRunnerContractTests(unittest.TestCase):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("licensed-project-export:", source)
         self.assertIn("SOURCE_REPO_TOKEN", source)
-        self.assertIn("ACCESS_TOKEN", source)
+        self.assertIn("STORAGE_GITHUB_TOKEN", source)
+        self.assertNotIn("secrets.ACCESS_TOKEN", source)
         self.assertIn("SPINE_LICENSE", source)
         self.assertIn("SPINE_LINUX_URL", source)
         self.assertIn("SPINE_LINK_LICENSED_EXPORT_WAITING_FOR_SECRETS", source)
