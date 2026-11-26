@@ -1,0 +1,56 @@
+name: Public Ubuntu execution - Spine Link last-seven preview
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  real-archives:
+    name: Audit seven live archive records
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Check out caller repository source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Audit newest seven live results, safely print metadata only
+        run: python scripts/audit_last7_real_archives.py
+
+  browser-probe:
+    name: Browser probe of seven archived pages
+    if: ${{ github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main') }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - name: Check out caller repository source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install browser
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Start patched static UI for PR verification
+        if: github.event_name == 'pull_request'
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory frontend > /tmp/preview-pr.log 2>&1 &
+          for i in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:4173/preview.html >/dev/null && exit 0
+            sleep .25
+          done
+          exit 1
+      - name: Test actual seven archived pages, using local UI in PR and live UI after deploy
+        env:
+          PREVIEW_SITE: ${{ github.event_name == 'pull_request' && 'http://127.0.0.1:4173' || 'https://spine-broker.leopolds2010.workers.dev' }}
+        run: node scripts/probe_real_last7_browser.mjs
