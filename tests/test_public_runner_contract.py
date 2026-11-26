@@ -11,6 +11,11 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertNotIn("self-hosted", source)
         self.assertGreaterEqual(source.count("runs-on: ubuntu-24.04"), 3)
 
+    def test_public_runner_polls_the_export_queue_every_five_minutes(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("schedule:", source)
+        self.assertIn("cron: '*/5 * * * *'", source)
+
     def test_licensed_export_job_is_delegated_to_public_runner(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("licensed-project-export:", source)
