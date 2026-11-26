@@ -42,7 +42,7 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertIn("scripts/spine-link-project-cloud-export.mjs", source)
         self.assertIn("SPINE_UPLOAD_ID", source)
         self.assertIn("timeout 180 xvfb-run", source)
-        self.assertEqual(source.count(".github/workflows/spine-link-project-export.yml"), 2)
+        self.assertNotIn(".github/workflows/spine-link-project-export.yml", source)
 
     def test_last7_reusable_audit_checks_private_source_from_public_runner(self):
         source = (ROOT / ".github" / "workflows" / "last7-real-preview.yml").read_text(encoding="utf-8")
