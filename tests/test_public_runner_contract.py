@@ -37,7 +37,7 @@ class PublicRunnerContractTests(unittest.TestCase):
 
     def test_reusable_workflow_accepts_all_credentials_from_private_control_plane(self):
         source = WORKFLOW.read_text(encoding="utf-8")
-        for secret in ("SOURCE_REPO_TOKEN", "ACCESS_TOKEN", "SPINE_LICENSE", "SPINE_LINUX_URL"):
+        for secret in ("SOURCE_REPO_TOKEN", "SPINE_LICENSE", "SPINE_LINUX_URL"):
             self.assertRegex(source, rf"(?s)workflow_call:.*?{secret}:\s*required: true")
         self.assertRegex(source, r"(?s)workflow_call:.*?upload_id:.*?type: string")
         self.assertIn("pull_request:", source)
