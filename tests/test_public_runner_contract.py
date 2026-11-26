@@ -11,6 +11,12 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertNotIn("self-hosted", source)
         self.assertGreaterEqual(source.count("runs-on: ubuntu-24.04"), 3)
 
+    def test_reusable_runner_probe_checks_out_its_own_public_repository(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        probe = source.split("  runner-probe:", 1)[1].split("  execute-private-checks:", 1)[0]
+        self.assertIn("repository: SpineAnimator/Spine-Link-project-export", probe)
+        self.assertIn("ref: main", probe)
+
     def test_public_runner_checks_storage_write_scope_without_printing_token(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("SPINE_LINK_STORAGE_WRITE_PERMISSION_MISSING", source)
