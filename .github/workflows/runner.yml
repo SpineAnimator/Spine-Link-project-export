@@ -10,7 +10,7 @@ on:
       - '.github/workflows/runner.yml'
       - 'tests/test_public_runner_contract.py'
   schedule:
-    - cron: '11 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
     inputs:
       upload_id:
