@@ -44,9 +44,12 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 18
     steps:
-      - name: Check out caller repository source
+      - name: Check out private 3Spine source on public caller runner
         uses: actions/checkout@v4
         with:
+          repository: ${{ inputs.source-repository }}
+          ref: ${{ inputs.source-ref }}
+          token: ${{ secrets.SOURCE_REPO_TOKEN }}
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
