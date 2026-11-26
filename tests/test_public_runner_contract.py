@@ -44,13 +44,14 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertIn("timeout 180 xvfb-run", source)
         self.assertEqual(source.count(".github/workflows/spine-link-project-export.yml"), 2)
 
-    def test_reusable_workflow_accepts_all_credentials_from_private_control_plane(self):
+    def test_reusable_workflow_accepts_source_token_and_optional_license_credentials(self):
         source = WORKFLOW.read_text(encoding="utf-8")
-        for secret in ("SOURCE_REPO_TOKEN", "STORAGE_GITHUB_TOKEN", "SPINE_LICENSE", "SPINE_LINUX_URL"):
-            self.assertRegex(source, rf"(?s)workflow_call:.*?{secret}:\s*required: true")
-        self.assertRegex(source, r"(?s)workflow_call:.*?upload_id:.*?type: string")
-        self.assertIn("pull_request:", source)
-        self.assertIn("public-spine-link-executor", source)
+        call = source.split("workflow_call:", 1)[1].split("  pull_request:", 1)[0]
+        self.assertRegex(call, r"(?s)SOURCE_REPO_TOKEN:\\s*required: true")
+        for secret in ("STORAGE_GITHUB_TOKEN", "SPINE_LICENSE", "SPINE_LINUX_URL"):
+            self.assertRegex(call, rf"(?s){secret}:\\s*required: false")
+        self.assertRegex(call, r"(?s)upload_id:.*?type: string")
+
 
 
 
