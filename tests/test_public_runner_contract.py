@@ -44,6 +44,15 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertIn("timeout 180 xvfb-run", source)
         self.assertEqual(source.count(".github/workflows/spine-link-project-export.yml"), 2)
 
+    def test_last7_reusable_audit_checks_private_source_from_public_runner(self):
+        source = (ROOT / ".github" / "workflows" / "last7-real-preview.yml").read_text(encoding="utf-8")
+        self.assertIn("workflow_call:", source)
+        self.assertIn("source-repository:", source)
+        self.assertIn("source-ref:", source)
+        self.assertIn("secrets.SOURCE_REPO_TOKEN", source)
+        self.assertIn("runs-on: ubuntu-24.04", source)
+        self.assertEqual(source.count("repository: ${{ inputs.source-repository }}"), 2)
+
     def test_reusable_workflow_uses_caller_token_for_private_source_and_optional_license_secrets(self):
         source = WORKFLOW.read_text(encoding="utf-8")
         call = source.split("workflow_call:", 1)[1].split("  pull_request:", 1)[0]
