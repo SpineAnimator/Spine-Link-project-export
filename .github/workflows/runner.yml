@@ -79,6 +79,7 @@ jobs:
             scripts/spine-link-project-queue.mjs
             scripts/spine-link-project-cloud-export.mjs
             scripts/spine-editor-export.mjs
+            .github/workflows/spine-link-project-export.yml
             tests/spine-link-project-queue.test.mjs
             tests/spine-editor-export.test.mjs
           sparse-checkout-cone-mode: false
@@ -140,6 +141,7 @@ jobs:
             scripts/spine-link-project-queue.mjs
             scripts/spine-link-project-cloud-export.mjs
             scripts/spine-editor-export.mjs
+            .github/workflows/spine-link-project-export.yml
             tests/spine-link-project-queue.test.mjs
             tests/spine-editor-export.test.mjs
           sparse-checkout-cone-mode: false

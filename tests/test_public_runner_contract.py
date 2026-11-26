@@ -34,6 +34,7 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertIn("scripts/spine-link-project-cloud-export.mjs", source)
         self.assertIn("SPINE_UPLOAD_ID", source)
         self.assertIn("timeout 180 xvfb-run", source)
+        self.assertEqual(source.count(".github/workflows/spine-link-project-export.yml"), 2)
 
     def test_reusable_workflow_accepts_all_credentials_from_private_control_plane(self):
         source = WORKFLOW.read_text(encoding="utf-8")
