@@ -1,9 +1,15 @@
-name: Private Spine-Link executor
+name: Public Ubuntu Spine-Link project export checks
 on:
   workflow_call:
     secrets:
       SOURCE_REPO_TOKEN:
         required: true
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/runner.yml'
+  schedule:
+    - cron: '11 * * * *'
   workflow_dispatch:
     inputs:
       upload_id:
@@ -19,7 +25,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   runner-probe:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 3
     steps:
       - run: |
@@ -27,7 +33,7 @@ jobs:
           echo "Public ephemeral runner allocated: $RUNNER_NAME ($RUNNER_OS)"
           uname -s
   execute-private-checks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - name: Require private source credential
