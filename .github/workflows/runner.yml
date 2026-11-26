@@ -9,8 +9,6 @@ on:
     secrets:
       SOURCE_REPO_TOKEN:
         required: true
-      ACCESS_TOKEN:
-        required: true
       SPINE_LICENSE:
         required: true
       SPINE_LINUX_URL:
