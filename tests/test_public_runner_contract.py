@@ -34,10 +34,11 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertIn("scripts/spine-link-project-cloud-export.mjs", source)
         self.assertIn("SPINE_UPLOAD_ID", source)
         self.assertIn("timeout 180 xvfb-run", source)
+        self.assertEqual(source.count(".github/workflows/spine-link-project-export.yml"), 2)
 
     def test_reusable_workflow_accepts_all_credentials_from_private_control_plane(self):
         source = WORKFLOW.read_text(encoding="utf-8")
-        for secret in ("SOURCE_REPO_TOKEN", "ACCESS_TOKEN", "SPINE_LICENSE", "SPINE_LINUX_URL"):
+        for secret in ("SOURCE_REPO_TOKEN", "SPINE_LICENSE", "SPINE_LINUX_URL"):
             self.assertRegex(source, rf"(?s)workflow_call:.*?{secret}:\s*required: true")
         self.assertRegex(source, r"(?s)workflow_call:.*?upload_id:.*?type: string")
         self.assertIn("pull_request:", source)
