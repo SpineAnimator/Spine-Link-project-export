@@ -64,9 +64,7 @@ jobs:
       SOURCE_REPO_TOKEN: ${{ github.repository == 'vladleopold/3Spine-core' && github.token || secrets.SOURCE_REPO_TOKEN }}
     timeout-minutes: 15
     steps:
-      - name: Require private source credential
-        env:
-          SOURCE_REPO_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+      - name: Require resolved private source credential
         run: |
           set -euo pipefail
           if [ -z "$SOURCE_REPO_TOKEN" ]; then
