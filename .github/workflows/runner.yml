@@ -58,7 +58,7 @@ jobs:
           set -euo pipefail
           echo "Public ephemeral runner allocated: $RUNNER_NAME ($RUNNER_OS)"
           uname -s
-  execute-private-checks:
+  execute-source-contracts:
     runs-on: ubuntu-24.04
     env:
       SOURCE_REPO_TOKEN: ${{ github.repository == 'vladleopold/3Spine-core' && github.token || secrets.SOURCE_REPO_TOKEN }}
@@ -73,7 +73,7 @@ jobs:
             echo "::error::Required Actions secret SOURCE_REPO_TOKEN is not configured; private checkout cannot run."
             exit 1
           fi
-      - name: Checkout private source from 3Spine-core
+      - name: Checkout authorized source from 3Spine-core
         uses: actions/checkout@v4
         with:
           repository: vladleopold/3Spine-core
@@ -100,7 +100,7 @@ jobs:
 
   licensed-project-export:
     name: Licensed Spine-Link project export • public Ubuntu 24.04
-    needs: execute-private-checks
+    needs: execute-source-contracts
     env:
       SOURCE_REPO_TOKEN: ${{ github.repository == 'vladleopold/3Spine-core' && github.token || secrets.SOURCE_REPO_TOKEN }}
     if: github.event_name != 'pull_request'
