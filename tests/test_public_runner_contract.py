@@ -28,6 +28,15 @@ class PublicRunnerContractTests(unittest.TestCase):
         self.assertIn("SPINE_UPLOAD_ID", source)
         self.assertIn("timeout 180 xvfb-run", source)
 
+    def test_reusable_workflow_accepts_all_credentials_from_private_control_plane(self):
+        source = WORKFLOW.read_text(encoding="utf-8")
+        for secret in ("SOURCE_REPO_TOKEN", "ACCESS_TOKEN", "SPINE_LICENSE", "SPINE_LINUX_URL"):
+            self.assertRegex(source, rf"(?s)workflow_call:.*?{secret}:\\s*required: true")
+        self.assertRegex(source, r"(?s)workflow_call:.*?upload_id:.*?type: string")
+        self.assertIn("pull_request:", source)
+        self.assertIn("Spine-Link-project-export", source)
+
+
 
 if __name__ == "__main__":
     unittest.main()
