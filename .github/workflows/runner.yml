@@ -9,6 +9,8 @@ on:
     secrets:
       SOURCE_REPO_TOKEN:
         required: true
+      STORAGE_GITHUB_TOKEN:
+        required: true
       SPINE_LICENSE:
         required: true
       SPINE_LINUX_URL:
@@ -105,17 +107,18 @@ jobs:
         shell: bash
         env:
           SOURCE_REPO_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+          STORAGE_GITHUB_TOKEN: ${{ secrets.STORAGE_GITHUB_TOKEN }}
           SPINE_LICENSE: ${{ secrets.SPINE_LICENSE }}
           SPINE_LINUX_URL: ${{ secrets.SPINE_LINUX_URL }}
         run: |
           set -euo pipefail
           missing=()
-          for key in SOURCE_REPO_TOKEN SPINE_LICENSE SPINE_LINUX_URL; do
+          for key in SOURCE_REPO_TOKEN STORAGE_GITHUB_TOKEN SPINE_LICENSE SPINE_LINUX_URL; do
             if [ -z "${!key}" ]; then missing+=("$key"); fi
           done
           storage_push=false
           if [ -n "$SOURCE_REPO_TOKEN" ]; then
-            storage_push="$(GH_TOKEN="$SOURCE_REPO_TOKEN" gh api repos/vladleopold/spine --jq '.permissions.push' 2>/dev/null || true)"
+            storage_push="$(GH_TOKEN="$STORAGE_GITHUB_TOKEN" gh api repos/vladleopold/spine --jq '.permissions.push' 2>/dev/null || true)"
           fi
           if [ "$storage_push" != "true" ]; then
             missing+=("STORAGE_REPOSITORY_WRITE_PERMISSION")
@@ -162,7 +165,7 @@ jobs:
         id: pick
         working-directory: private-source
         env:
-          STORAGE_GITHUB_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+          STORAGE_GITHUB_TOKEN: ${{ secrets.STORAGE_GITHUB_TOKEN }}
           REQUESTED_UPLOAD_ID: ${{ github.event.client_payload.uploadId || inputs.upload_id || '' }}
         run: node scripts/spine-link-project-queue.mjs
       - name: Require licensed Spine Editor configuration
@@ -170,7 +173,7 @@ jobs:
         env:
           SPINE_LICENSE: ${{ secrets.SPINE_LICENSE }}
           SPINE_LINUX_URL: ${{ secrets.SPINE_LINUX_URL }}
-          STORAGE_GITHUB_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+          STORAGE_GITHUB_TOKEN: ${{ secrets.STORAGE_GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           test -n "$SPINE_LICENSE"
@@ -213,7 +216,7 @@ jobs:
         working-directory: private-source
         env:
           SPINE_LICENSE: ${{ secrets.SPINE_LICENSE }}
-          STORAGE_GITHUB_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
+          STORAGE_GITHUB_TOKEN: ${{ secrets.STORAGE_GITHUB_TOKEN }}
           SPINE_STORAGE_WORKSPACE: ${{ github.workspace }}/storage
           SPINE_UPLOAD_ID: ${{ steps.pick.outputs.uploadId }}
           SPINE_UPLOAD_PATH: ${{ steps.pick.outputs.uploadPath }}
