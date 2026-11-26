@@ -7,8 +7,6 @@ on:
         type: string
         default: ''
     secrets:
-      SOURCE_REPO_TOKEN:
-        required: true
       STORAGE_GITHUB_TOKEN:
         required: false
       SPINE_LICENSE:
@@ -60,6 +58,8 @@ jobs:
           uname -s
   execute-private-checks:
     runs-on: ubuntu-24.04
+    env:
+      SOURCE_REPO_TOKEN: ${{ github.repository == 'vladleopold/3Spine-core' && github.token || secrets.SOURCE_REPO_TOKEN }}
     timeout-minutes: 15
     steps:
       - name: Require private source credential
@@ -76,7 +76,7 @@ jobs:
         with:
           repository: vladleopold/3Spine-core
           ref: main
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          token: ${{ env.SOURCE_REPO_TOKEN }}
           path: private-source
           persist-credentials: false
           sparse-checkout: |
@@ -100,6 +100,8 @@ jobs:
   licensed-project-export:
     name: Licensed Spine-Link project export • public Ubuntu 24.04
     needs: execute-private-checks
+    env:
+      SOURCE_REPO_TOKEN: ${{ github.repository == 'vladleopold/3Spine-core' && github.token || secrets.SOURCE_REPO_TOKEN }}
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 35
@@ -108,7 +110,6 @@ jobs:
         id: credentials
         shell: bash
         env:
-          SOURCE_REPO_TOKEN: ${{ secrets.SOURCE_REPO_TOKEN }}
           STORAGE_GITHUB_TOKEN: ${{ secrets.STORAGE_GITHUB_TOKEN }}
           SPINE_LICENSE: ${{ secrets.SPINE_LICENSE }}
           SPINE_LINUX_URL: ${{ secrets.SPINE_LINUX_URL }}
@@ -119,7 +120,7 @@ jobs:
             if [ -z "${!key}" ]; then missing+=("$key"); fi
           done
           storage_push=false
-          if [ -n "$SOURCE_REPO_TOKEN" ]; then
+          if [ -n "$STORAGE_GITHUB_TOKEN" ]; then
             storage_push="$(GH_TOKEN="$STORAGE_GITHUB_TOKEN" gh api repos/vladleopold/spine --jq '.permissions.push' 2>/dev/null || true)"
           fi
           if [ "$storage_push" != "true" ]; then
@@ -139,7 +140,7 @@ jobs:
         with:
           repository: vladleopold/3Spine-core
           ref: main
-          token: ${{ secrets.SOURCE_REPO_TOKEN }}
+          token: ${{ env.SOURCE_REPO_TOKEN }}
           path: private-source
           persist-credentials: false
           sparse-checkout: |
