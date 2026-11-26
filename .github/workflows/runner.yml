@@ -10,11 +10,11 @@ on:
       SOURCE_REPO_TOKEN:
         required: true
       STORAGE_GITHUB_TOKEN:
-        required: true
+        required: false
       SPINE_LICENSE:
-        required: true
+        required: false
       SPINE_LINUX_URL:
-        required: true
+        required: false
   pull_request:
     paths:
       - '.github/workflows/runner.yml'
