@@ -37,7 +37,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: public-spine-link-executor
+  group: public-spine-link-executor-${{ github.repository }}-${{ github.ref }}
   cancel-in-progress: false
 jobs:
   runner-probe:
