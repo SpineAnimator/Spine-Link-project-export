@@ -1,5 +1,9 @@
 name: Private Spine-Link executor
 on:
+  workflow_call:
+    secrets:
+      SOURCE_REPO_TOKEN:
+        required: true
   workflow_dispatch:
     inputs:
       upload_id:
