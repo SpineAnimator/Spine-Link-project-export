@@ -45,11 +45,11 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           python3 -m http.server 4173 --bind 127.0.0.1 --directory frontend > /tmp/preview-pr.log 2>&1 &
-          for i in $(seq 1 60); do
+          for attempt in $(seq 1 60); do
             curl -fsS http://127.0.0.1:4173/preview.html >/dev/null && exit 0
+            if (( attempt == 60 )); then exit 1; fi
             sleep .25
           done
-          exit 1
       - name: Test actual seven archived pages, using local UI in PR and live UI after deploy
         env:
           PREVIEW_SITE: ${{ github.event_name == 'pull_request' && 'http://127.0.0.1:4173' || 'https://spine-broker.leopolds2010.workers.dev' }}
